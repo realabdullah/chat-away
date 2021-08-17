@@ -1,4 +1,11 @@
 # chataway
+```
+A webApp chat room where you meet and connect with new friends.
+```
+# What Next?
+```
+Watch out, as I roll out more and fascinating features.
+```
 
 ## Project setup
 ```
