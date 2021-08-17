@@ -10,6 +10,7 @@
         <div class="reg-stead">
           Don't have an account? <router-link to="/register"> Create account </router-link>
         </div>
+        <button @click="signWithGoogle">Google</button>
       </div>
     </form>
   </div>
@@ -27,6 +28,21 @@ export default {
     const errMsg = ref('')
 
     const router = useRouter() // get a reference to our vue router
+
+    const signWithGoogle = () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithRedirect(provider)      
+      .then((result) => {
+        router.push('/chat') // redirect to the chats
+        console.log('Signed!')
+        const user = result.user;
+        // ...
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+      });
+    }
+
     const signIn = () => { // we also renamed this method 
       firebase
       .auth()
@@ -62,7 +78,8 @@ export default {
       email,
       password,
       errMsg,
-      signIn
+      signIn,
+      signWithGoogle
     }
   }
 }

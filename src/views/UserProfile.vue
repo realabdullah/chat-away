@@ -1,6 +1,12 @@
 <template>
   <div class="user">
 
+    <div class="back">
+      <router-link to="/chat">
+        <button type="button" class="btn btn-light">Back</button>
+      </router-link>
+    </div>
+
     <div class="user-profile-pic">
       <img v-if="info.userPhoto" :src="info.userPhoto" alt="user">
       <img src="../assets/user.jpg" alt="user-solid" v-else>

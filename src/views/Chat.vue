@@ -45,6 +45,8 @@ export default {
       messages: []
     })
 
+    window.scrollTo(0, document.body.scrollHeight)
+
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         state.username = user.displayName
@@ -115,7 +117,7 @@ export default {
           console.log(state.userPhoto)
         }
       })
-      window.scrollTo(0, document.body.scrollHeight);
+      window.scrollTo(0, document.body.scrollHeight)
     })
 
     return {
