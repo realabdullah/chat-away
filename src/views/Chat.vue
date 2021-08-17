@@ -2,8 +2,10 @@
   <div class="chat-body">
     <header>
 			<div class="user">
-        <img v-if="state.userPhoto" :src="state.userPhoto" alt="user">
-        <img v-else src="../assets/user-solid.svg" alt="user">
+        <router-link :to="`/profile/${id}`">
+          <img v-if="state.userPhoto" :src="state.userPhoto" alt="user">
+          <img v-else src="../assets/user-solid.svg" alt="user">
+        </router-link>
         <h1>Welcome, <br> {{ state.username }}</h1>
       </div>
       <button @click="Logout" class="logout">Logout</button>
@@ -35,7 +37,6 @@ import { getAuth } from "firebase/auth";
 
 export default {
   setup() {
-    const inputUsername = ref("")
     const inputMessage = ref("")
 
     const state = reactive({
@@ -52,13 +53,6 @@ export default {
         console.log(state.userPhoto)
       }
     })
-
-    const Login = () => {
-      if(inputUsername.value != "" || inputUsername.value != null) {
-        state.username = inputUsername.value
-        inputUsername.value = ""
-      }
-    }
 
     const router = useRouter()
 
@@ -78,7 +72,7 @@ export default {
         username: state.username,
         content: inputMessage.value
       }
-
+      
       messagesRef.push(message)
       inputMessage.value = ""
     }
@@ -103,7 +97,6 @@ export default {
 
     const authListener = firebase.auth().onAuthStateChanged(function(user) {
       if (!user) { // not logged in
-        alert('you must be logged in to view this. redirecting to the home page')
         router.push('/')
       }
     })
@@ -123,9 +116,7 @@ export default {
     })
     
     return {
-      inputUsername,
       state,
-      Login,
       SendMessage,
       inputMessage,
       Logout
@@ -146,12 +137,17 @@ export default {
 	box-sizing: border-box;
 }
 .chat-body {
-  background: linear-gradient(283deg, #ECFCFF 0%, #ECFCFF 40%, #B2FCFF calc(40% + 1px), #B2FCFF 60%, #5EDFFF calc(60% + 1px), #5EDFFF 72%, #3E64FF calc(72% + 1px), #3E64FF 100%);
+  height: 100%;
+  /*background: linear-gradient(283deg, #ECFCFF 0%, #ECFCFF 40%, #B2FCFF calc(40% + 1px), #B2FCFF 60%, #5EDFFF calc(60% + 1px), #5EDFFF 72%, #3E64FF calc(72% + 1px), #3E64FF 100%);*/
 
   header {
     display: flex;
     padding: 15px;
     justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #312a2a;
 
     .user {
       display: flex;
@@ -179,17 +175,20 @@ export default {
       height: max-content;
       border: none;
       border-radius: 5px;
-      background-color: #3e64ff;
+      background-color: #312a2a;
       color: #b2fcff;
       font-weight: bold;
+      box-shadow:
+        0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+        0px 6px 10px 0px rgba(0, 0, 0, 0.14),
+        0px 1px 18px 0px rgba(0,0,0,.12);
     }
   }
 
   .chat-box {
-    height: 100vh;
     background-image: url('../assets/wallpaper.png');
-    border-radius: 20px 20px 0px 0px;
     padding: 15px;
+    height: 100vh;
 
     .receiver {
       display: flex;
@@ -224,6 +223,7 @@ export default {
       align-items: flex-end;
 
       .username {
+        display: none;
         color: #6e6e70;
         font-size: xx-small;
         font-weight: bold;
@@ -234,8 +234,8 @@ export default {
 
       .content {
         padding: 2px 12px;
-        background-color: #3e64ff;
-        border-radius: 20px 1px 20px 20px;
+        background-color: #312a2a;
+        border-radius: 20px 20px 1px 20px;
         color: #fff;
         font-size: 0.9rem;
         line-height: 2rem;
@@ -245,8 +245,11 @@ export default {
   }
 
   footer {
-    position: sticky;
+    position: fixed;
     bottom: 0;
+    width: -moz-available;
+    width: -webkit-available;
+    width: -webkit-fill-available;
 
     form {
       display: flex;
@@ -265,7 +268,7 @@ export default {
       .receive-input {
         padding: 15px 15px 10px;;
         border: none;
-        background-color: #3e64ff;
+        background-color: #312a2a;
 
         img {
           width: 15px;

@@ -4,7 +4,7 @@
 
 <script>
 import { ref, watchEffect } from 'vue' // used for conditional rendering
-import firebase from 'firebase'
+import firebase from './db'
 import { useRouter } from 'vue-router'
 
 export default {

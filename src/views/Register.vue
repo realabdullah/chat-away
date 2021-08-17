@@ -1,10 +1,15 @@
 <template>
   <div class="register">
     <h1> Create Account </h1>
-    <input type='text' placeholder="Username" v-model='inputUsername' />
+    <input type='text' placeholder="Username" v-model='userInfo.username' />
     <input type='text' placeholder="Email" v-model='email' />
     <input type='password' placeholder="Password" v-model='password' />
-    <button class="submit" @click="register">Create Account</button>
+    <input type="text" placeholder="Gender" v-model="userInfo.gender">
+    <input type="telephone" placeholder="Phone Number" v-model="userInfo.phone">
+    <input type="text" placeholder="State" v-model="userInfo.state">
+    <button class="submit" @click="register">
+      <div>Create Account</div>
+    </button>
     <div class="login-stead">
       <p>Already have an account? </p><router-link to="/sign-in"> Login here </router-link>
     </div>
@@ -16,9 +21,10 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import firebase from 'firebase'
+import { createUser } from '../db'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 export default {
@@ -26,6 +32,13 @@ export default {
     const inputUsername = ref('')
     const email = ref('')
     const password = ref('')
+
+    const userInfo = reactive({
+      username: '',
+      gender: '',
+      phone: '',
+      state: ''
+    })
 
     const router = useRouter()
 
@@ -47,23 +60,36 @@ export default {
       firebase
       .auth() // get the auth api
       .createUserWithEmailAndPassword(email.value, password.value) // need .value because ref()
-      .then((data) => {
-        data.user
+      .then((userCredential) => {
+        userCredential.user
         .updateProfile({
-          displayName: inputUsername.value
-        })
-        console.log('Successfully registered!');
-        router.push('/sign-in') // redirect to the chats
-      })
-      .catch(error => {
-        console.log(error.code)
-        alert(error.message);
-      });
+            displayName: userInfo.username
+          })
+        const user = userCredential.user
+        createUser({ ...userInfo })
+        router.push('/sign-in')
+        console.log(user.displayName)
+        /*db.collection('users').add(userInfo).then(() => {
+          userInfo.username = "Ada"*/
+        //setDoc(doc(db, 'users', data.user.uid), {userInfo})
+        //return db.collection('users').doc(data.user.uid).set({
+        })/*.then((data) => {
+          data.user
+          .updateProfile({
+            displayName: userInfo.username
+          })
+          console.log('Sined!');
+        })*/
+        .catch(error => {
+          console.log(error.code)
+        });
+      //})
     }
     return {
       inputUsername,
       email,
       password,
+      userInfo,
       register,
       signUp
     }
@@ -118,7 +144,7 @@ export default {
     color: #fff;
     font-size: 1.1rem;
     padding: 15px;
-    margin-top: 10px;
+    margin-top: 20px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
   }
 
