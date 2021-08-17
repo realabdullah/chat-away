@@ -54,6 +54,12 @@ export default {
       }
     })
 
+    const authListener = firebase.auth().onAuthStateChanged(function(user) {
+      if (!user) { // not logged in
+        router.push('/')
+      }
+    })
+
     const router = useRouter()
 
     const Logout = () => {
@@ -74,6 +80,7 @@ export default {
       }
       
       messagesRef.push(message)
+      window.scrollTo(0, document.body.scrollHeight);
       inputMessage.value = ""
     }
 
@@ -93,12 +100,7 @@ export default {
         })
         state.messages = messages
       })
-    })
-
-    const authListener = firebase.auth().onAuthStateChanged(function(user) {
-      if (!user) { // not logged in
-        router.push('/')
-      }
+      window.scrollTo(0, document.body.scrollHeight);
     })
 
     onBeforeUnmount(() => {
@@ -113,6 +115,7 @@ export default {
           console.log(state.userPhoto)
         }
       })
+      window.scrollTo(0, document.body.scrollHeight);
     })
     
     return {
@@ -188,7 +191,8 @@ export default {
   .chat-box {
     background-image: url('../assets/wallpaper.png');
     padding: 15px;
-    height: 100vh;
+    height: 100%;
+    margin-bottom: 50px;
 
     .receiver {
       display: flex;

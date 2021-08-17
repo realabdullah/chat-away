@@ -1,12 +1,31 @@
 <template>
   <div class="register">
     <h1> Create Account </h1>
-    <input type='text' placeholder="Username" v-model='userInfo.username' />
-    <input type='text' placeholder="Email" v-model='email' />
-    <input type='password' placeholder="Password" v-model='password' />
-    <input type="text" placeholder="Gender" v-model="userInfo.gender">
-    <input type="telephone" placeholder="Phone Number" v-model="userInfo.phone">
-    <input type="text" placeholder="State" v-model="userInfo.state">
+    <div class="input-container">
+      <i class="fa fa-user icon"></i>
+      <input type='text' placeholder="Username" v-model='userInfo.username' />
+    </div>
+    <div class="input-container">
+      <i class="fa fa-envelope icon"></i>
+      <input type='text' placeholder="Email" v-model='email' />
+    </div>
+    <div class="input-container">
+      <i class="fa fa-key icon"></i>
+      <input type='password' placeholder="Password" v-model='password' />
+    </div>
+    <div class="input-container">
+      <i class="fa fa-people icon"></i>
+      <input type="text" placeholder="Gender" v-model="userInfo.gender">
+    </div>
+    <div class="input-container">
+      <i class="fa fa-phone icon"></i>
+      <input type="telephone" placeholder="Phone Number" v-model="userInfo.phone">
+    </div>
+    <div class="input-container">
+      <i class="fa fa-location icon"></i>
+      <input type="text" placeholder="State" v-model="userInfo.state">
+    </div>
+    
     <button class="submit" @click="register">
       <div>Create Account</div>
     </button>
@@ -123,7 +142,38 @@ export default {
     margin-bottom: 30px;
   }
 
+  .input-container {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .icon {
+    padding: 10px;
+    background: dodgerblue;
+    color: white;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 20px;
+    outline: none;
+  }
+
+  .input-field:focus {
+    border: 2px solid dodgerblue;
+  }
+
   input {
+    padding: 10px;
+    border: none;
+    border-radius: 0px 17px 17px 0px;
+  }
+
+  /*input {
     width: 100%;
     width: -webkit-fill-available;
     width: -moz-fill-available;
@@ -134,7 +184,7 @@ export default {
     margin: 0px 10px;
     padding: 10px;
     font-size: 1.1rem;
-  }
+  }*/
 
   .submit {
     width: auto;
