@@ -2,10 +2,8 @@
   <div class="chat-body">
     <header>
 			<div class="user">
-        <router-link :to="`/profile/${id}`">
-          <!--<img v-if="state.userPhoto" :src="state.userPhoto" alt="user"> -->
-          <img src="../assets/user-solid.svg" alt="user">
-        </router-link>
+        <!--<img v-if="state.userPhoto" :src="state.userPhoto" alt="user"> -->
+        <img src="../assets/user-solid.svg" alt="user">
         <h1>Welcome, <br> {{ user.displayName }}</h1>
       </div>
       <button @click="handleClick" class="logout">Logout</button>
