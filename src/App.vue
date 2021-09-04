@@ -4,7 +4,7 @@
 
 <script>
 import { ref, watchEffect } from 'vue' // used for conditional rendering
-import firebase from './db'
+import { projectAuth } from './firebase/config'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -13,7 +13,7 @@ export default {
     const isLoggedIn = ref(true)
 
     // runs after firebase is initialized
-    firebase.auth().onAuthStateChanged(function(user) {
+    projectAuth.onAuthStateChanged(function(user) {
       if (user) {
         isLoggedIn.value = true // if we have a user
       } else {
@@ -22,7 +22,7 @@ export default {
     })
 
     const signOut = () => {
-      firebase.auth().signOut()
+      projectAuth.signOut()
       router.push('/')
     }
 

@@ -3,24 +3,25 @@
     <header>
 			<div class="user">
         <router-link :to="`/profile/${id}`">
-          <img v-if="state.userPhoto" :src="state.userPhoto" alt="user">
-          <img v-else src="../assets/user-solid.svg" alt="user">
+          <!--<img v-if="state.userPhoto" :src="state.userPhoto" alt="user"> -->
+          <img src="../assets/user-solid.svg" alt="user">
         </router-link>
-        <h1>Welcome, <br> {{ state.username }}</h1>
+        <h1>Welcome, <br> {{ user.displayName }}</h1>
       </div>
-      <button @click="Logout" class="logout">Logout</button>
+      <button @click="handleClick" class="logout">Logout</button>
     </header>
 
-    <section class="chat-box">
-			<div v-for="message in state.messages" :key="message.key" :class="(message.username == state.username ? 'sender animate__animated animate__bounceInRight' : 'receiver animate__animated animate__bounceInLeft')">
-				<div class="username">{{ message.username }}</div>
-				<div class="content">{{ message.content }}</div>
+    <section class="chat-box" ref="newmessage">
+			<div v-for="doc in formattedDocuments" :key="doc.id" :class="(doc.name == user.displayName ? 'sender animate__animated animate__bounceInRight' : 'receiver animate__animated animate__bounceInLeft')">
+				<div class="username">{{ doc.name }}</div>
+				<div class="content">{{ doc.message }}</div>
+        <div class="created">{{ doc.createdAt }} ago.</div>
 			</div>
     </section>
 
     <footer>
-      <form @submit.prevent="SendMessage">
-        <input class="send-input" type="text" v-model="inputMessage" placeholder="Type a message">
+      <form @submit.prevent="handleSubmit">
+        <input class="send-input" type="text" v-model="message" placeholder="Type a message">
         <button class="receive-input" type="submit">
           <img src="../assets/send.svg" alt="paper-plane-regular">
         </button>
@@ -30,15 +31,72 @@
 </template>
 
 <script>
-import {reactive, onMounted, onBeforeUnmount, ref} from "vue"
-import firebase from 'firebase'
-import { useRouter } from 'vue-router'
-import { getAuth } from "firebase/auth";
+import { onUpdated, ref, computed } from "vue"
+import useLogout from '../composables/useLogout'
+import getUser from '../composables/getUser'
+import { timestamp } from '../firebase/config'
+import useCollection from '../composables/useCollection'
+import getCollection from '../composables/getCollection'
+import { formatDistanceToNow } from 'date-fns'
 
 export default {
   setup() {
-    const inputMessage = ref("")
 
+    const { logout, logoutError } = useLogout()
+    const { addDoc, error } = useCollection('messages')
+    const { user } = getUser()
+    const { documents, msgerror } = getCollection('messages')
+
+    const message = ref('')
+
+    const handleSubmit = async() => {
+      const chat = {
+        name: user.value.displayName,
+        message: message.value,
+        createdAt: timestamp()
+      }
+
+      await addDoc(chat)
+      if(!error.value) {
+        message.value = ''
+      }
+    }
+
+    const handleClick = async () => {
+      await logout()
+      if(!logoutError.value) {
+        console.log('User logged out')
+      }
+    }
+
+    // eslint-disable-next-line vue/return-in-computed-property
+    const formattedDocuments = computed(() => {
+      if(documents.value) {
+        return documents.value.map(doc => {
+          let time = formatDistanceToNow(doc.createdAt.toDate())
+          return { ...doc, createdAt: time }
+        })
+      }
+    })
+
+     //auto scroll to last messages
+    const newmessage = ref(null)
+
+    onUpdated(() => {
+      newmessage.value.scrollTop = newmessage.value.scrollHeight
+    })
+
+    return {
+      message,
+      handleClick,
+      handleSubmit,
+      user,
+      documents,
+      formattedDocuments,
+      newmessage
+    }
+
+    /*
     const state = reactive({
       username: '',
       userPhoto: '',
@@ -118,14 +176,17 @@ export default {
         }
       })
       window.scrollTo(0, document.body.scrollHeight)
-    })
+    }) 
+
+   
 
     return {
-      state,
-      SendMessage,
-      inputMessage,
-      Logout
-    }
+      //state,
+      //SendMessage,
+      //inputMessage,
+      //Logout,
+      newmessage
+    } */
   }
 }
 </script>
@@ -219,6 +280,15 @@ export default {
 				line-height: 2rem;
 				max-width: 70%;
       }
+
+      .created {
+        color: #6e6e70;
+        font-size: xx-small;
+        font-weight: bold;
+        margin-left: 3px;
+        margin-top: 5px;
+        max-width: 70%;
+      }
     }
 
     .sender {
@@ -245,6 +315,15 @@ export default {
         color: #fff;
         font-size: 0.9rem;
         line-height: 2rem;
+        max-width: 70%;
+      }
+
+      .created {
+        color: #6e6e70;
+        font-size: xx-small;
+        font-weight: bold;
+        margin-left: 3px;
+        margin-top: 5px;
         max-width: 70%;
       }
     }

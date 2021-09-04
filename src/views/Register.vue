@@ -26,7 +26,7 @@
       <input type="text" placeholder="State" v-model="userInfo.state">
     </div>
     
-    <button class="submit" @click="register">
+    <button class="submit" @click="handleSubmit">
       <div>Create Account</div>
     </button>
     <div class="login-stead">
@@ -40,77 +40,28 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import firebase from 'firebase'
-import { createUser } from '../db'
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { ref } from 'vue'
+import useSignup from '../composables/useSignup'
 
 export default {
-  setup() {
-    const inputUsername = ref('')
+  setup(props, context) {
+    const { error, signup } = useSignup()
+
+    const displayName = ref('')
     const email = ref('')
     const password = ref('')
 
-    const userInfo = reactive({
-      username: '',
-      gender: '',
-      phone: '',
-      state: ''
-    })
-
-    const router = useRouter()
-
-    const signUp = () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider)      
-      .then((result) => {
-        console.log('Signed!')
-        router.push('/chat') // redirect to the chats
-        const user = result.user;
-        // ...
-      }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-      });
+    const handleSubmit = async () => {
+      await signup(email.value, password.value, displayName.value)
+      context.emit('signup')
     }
 
-    const register = () => {
-      firebase
-      .auth() // get the auth api
-      .createUserWithEmailAndPassword(email.value, password.value) // need .value because ref()
-      .then((userCredential) => {
-        userCredential.user
-        .updateProfile({
-            displayName: userInfo.username
-          })
-        const user = userCredential.user
-        createUser({ ...userInfo })
-        router.push('/sign-in')
-        console.log(user.displayName)
-        /*db.collection('users').add(userInfo).then(() => {
-          userInfo.username = "Ada"*/
-        //setDoc(doc(db, 'users', data.user.uid), {userInfo})
-        //return db.collection('users').doc(data.user.uid).set({
-        })/*.then((data) => {
-          data.user
-          .updateProfile({
-            displayName: userInfo.username
-          })
-          console.log('Sined!');
-        })*/
-        .catch(error => {
-          console.log(error.code)
-        });
-      //})
-    }
     return {
-      inputUsername,
+      displayName,
       email,
       password,
-      userInfo,
-      register,
-      signUp
+      handleSubmit,
+      error
     }
   }
 }

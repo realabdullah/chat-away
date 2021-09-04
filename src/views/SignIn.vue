@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <form class="login-form" @submit.prevent="signIn">
+    <form class="login-form" @submit.prevent="handleSubmit">
       <div class="form-inner">
         <h1>Login</h1>
         <input type="text" v-model="email" placeholder="Please enter your Email">
@@ -18,68 +18,27 @@
 
 <script>
 import { ref } from 'vue'
-import firebase from 'firebase'
-import { useRouter } from 'vue-router' // import router
+import useLogin from '../composables/useLogin'
 
 export default {
-  setup() {
+  setup(props, context) {
     const email = ref('')
     const password = ref('')
-    const errMsg = ref('')
 
-    const router = useRouter() // get a reference to our vue router
+    const { error, login } = useLogin()
 
-    const signWithGoogle = () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithRedirect(provider)      
-      .then((result) => {
-        router.push('/chat') // redirect to the chats
-        console.log('Signed!')
-        const user = result.user;
-        // ...
-      }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-      });
-    }
-
-    const signIn = () => { // we also renamed this method 
-      firebase
-      .auth()
-      .signInWithEmailAndPassword(email.value, password.value) // THIS LINE CHANGED
-      .then((data) => {
-        console.log('Successfully logged in!');
-        router.push('/chat') // redirect to the feed
-      })
-      .catch(error => {
-        switch (error.code) {
-          case 'auth/invalid-email':
-            errMsg.value = 'Invalid email'
-            break
-          case 'auth/user-not-found':
-            errMsg.value = 'No account with that email was found'
-            break
-          case 'auth/wrong-password':
-            errMsg.value = 'Incorrect password'
-            break  
-          default:
-            errMsg.value = 'Email or password was incorrect'
-            break
-        }
-      });
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          console.log(user.email)
-        }
-      })
+    const handleSubmit = async () => {
+      await login(email.value, password.value)
+      if(!error.value) {
+        context.emit('login')
+      }
     }
 
     return {
       email,
       password,
-      errMsg,
-      signIn,
-      signWithGoogle
+      handleSubmit,
+      error
     }
   }
 }
