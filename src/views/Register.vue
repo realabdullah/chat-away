@@ -48,7 +48,9 @@ export default {
 
     const handleSubmit = async () => {
       await signup(email.value, password.value, displayName.value)
-      context.emit('signup')
+      router.push({
+        path: '/chat'
+      })
     }
 
     const handleLogin = async () => {
