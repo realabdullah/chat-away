@@ -1,46 +1,27 @@
 <template>
-  <div class="homepage">
-    <h1>chatAway</h1>
-    <nav>
-      <span v-if="isLoggedIn"> 
-        <div class="register">
-          <router-link to="/chat"> Chat Room </router-link>
-        </div>
-        <div class="signin" @click="signOut">
-          Logout
-        </div>
-      </span>
-      <span v-else>
-        <div class="register">
-          <router-link to="/register"> Sign Up </router-link>
-        </div>
-        <div class="signin">
-          <router-link to="/sign-in"> Login </router-link>
-        </div>
-      </span>
-    </nav>
-  </div>
+  <Register @signup="enterChat" />
 </template>
 
 <script>
-import { ref } from 'vue'
-import firebase from 'firebase'
+import Register from '../views/Register.vue'
+import { useRouter } from 'vue-router'
 
 export default {
-  setup() {
-    const isLoggedIn = ref(true)
+  components: {
+    Register
+  },
 
-     // runs after firebase is initialized
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        isLoggedIn.value = true // if we have a user
-      } else {
-        isLoggedIn.value = false // if we do not
-      }
-    })
+  setup() {
+    const router = useRouter()
+
+    const enterChat = () => {
+      router.push({
+        path: '/chat'
+      })
+    }
 
     return {
-      isLoggedIn
+      enterChat
     }
   }
 }

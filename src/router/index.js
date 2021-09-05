@@ -1,4 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { projectAuth } from '../firebase/config'
+
+//auth guard
+const requireAuth = (to,from, next) => {
+  let user = projectAuth.currentUser
+  if(!user) {
+    next({
+      path: '/register'
+    })
+  } else {
+    next()
+  }
+}
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,12 +26,9 @@ const router = createRouter({
       component: () => import('../views/Register.vue')
     },
     {
-      path: '/sign-in',
-      component: () => import('../views/SignIn.vue')
-    },
-    {
       path: '/chat',
-      component: () => import('../views/Chat.vue')
+      component: () => import('../views/Chat.vue'),
+      beforeEnter: requireAuth
     },
     {
       path: '/profile/:id',

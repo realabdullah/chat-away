@@ -35,7 +35,7 @@ import useLogin from '../composables/useLogin'
 import { useRouter } from 'vue-router'
 
 export default {
-  setup() {
+  setup(props, context) {
     const { error, signup } = useSignup()
     const { loginError, login } = useLogin()
     const router = useRouter()
@@ -48,22 +48,20 @@ export default {
 
     const handleSubmit = async () => {
       await signup(email.value, password.value, displayName.value)
-      router.push('/chat')
+      context.emit('signup')
     }
 
     const handleLogin = async () => {
       await login(email.value, password.value)
-      router.push('/chat')
+      context.emit('signup')
     }
 
     const loginBtn = () => {
       slideUp.value = true
-      console.log('slided')
     }
 
     const signupBtn = () => {
       slideUp.value = false
-      console.log('unslided')
     }
 
     return {

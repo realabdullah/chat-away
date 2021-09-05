@@ -30,6 +30,7 @@
 
 <script>
 import { onUpdated, ref, computed } from "vue"
+import { useRouter } from 'vue-router'
 import useLogout from '../composables/useLogout'
 import getUser from '../composables/getUser'
 import { timestamp } from '../firebase/config'
@@ -39,7 +40,8 @@ import { formatDistanceToNow } from 'date-fns'
 
 export default {
   setup() {
-
+    
+    const router = useRouter()
     const { logout, logoutError } = useLogout()
     const { addDoc, error } = useCollection('messages')
     const { user } = getUser()
@@ -61,6 +63,7 @@ export default {
     }
 
     const handleClick = async () => {
+      router.push('/register')
       await logout()
       if(!logoutError.value) {
         console.log('User logged out')
@@ -93,98 +96,6 @@ export default {
       formattedDocuments,
       newmessage
     }
-
-    /*
-    const state = reactive({
-      username: '',
-      userPhoto: '',
-      messages: []
-    })
-
-    window.scrollTo(0, document.body.scrollHeight)
-
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        state.username = user.displayName
-        state.userPhoto = user.photoURL
-        console.log(user.displayName)
-        console.log(state.userPhoto)
-      }
-    })
-
-    const authListener = firebase.auth().onAuthStateChanged(function(user) {
-      if (!user) { // not logged in
-        router.push('/')
-      }
-    })
-
-    const router = useRouter()
-
-    const Logout = () => {
-      firebase.auth().signOut()
-      router.push('/')
-    }
-
-    const SendMessage = () => {
-      const messagesRef = firebase.database().ref("messages")
-
-      if(inputMessage.value === "" || inputMessage.value === null) {
-        return;
-      }
-      
-      const message = {
-        username: state.username,
-        content: inputMessage.value
-      }
-      
-      messagesRef.push(message)
-      window.scrollTo(0, document.body.scrollHeight);
-      inputMessage.value = ""
-    }
-
-    onMounted (() => {
-      const messagesRef = firebase.database().ref("messages")
-
-      messagesRef.on('value', snapshot => {
-        const data = snapshot.val()
-        let messages = []
-
-        Object.keys(data).forEach(key => {
-          messages.push({
-            id: key,
-            username: data[key].username,
-            content: data[key].content
-          })
-        })
-        state.messages = messages
-      })
-      window.scrollTo(0, document.body.scrollHeight);
-    })
-
-    onBeforeUnmount(() => {
-      // clear up listener
-      authListener()
-
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          state.username = user.displayName
-          state.userPhoto = user.photoURL
-          console.log(user.displayName)
-          console.log(state.userPhoto)
-        }
-      })
-      window.scrollTo(0, document.body.scrollHeight)
-    }) 
-
-   
-
-    return {
-      //state,
-      //SendMessage,
-      //inputMessage,
-      //Logout,
-      newmessage
-    } */
   }
 }
 </script>
