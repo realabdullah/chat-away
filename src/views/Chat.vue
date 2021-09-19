@@ -9,13 +9,7 @@
       <button @click="handleClick" class="logout">Logout</button>
     </header>
 
-    <section class="chat-box" ref="newmessage">
-			<div v-for="doc in formattedDocuments" :key="doc.id" :class="(doc.name == user.displayName ? 'sender animate__animated animate__bounceInRight' : 'receiver animate__animated animate__bounceInLeft')">
-				<div class="username">{{ doc.name }}</div>
-				<div class="content">{{ doc.message }}</div>
-        <div class="created">{{ doc.createdAt }} ago.</div>
-			</div>
-    </section>
+    <Chatsection />
 
     <footer>
       <form @submit.prevent="handleSubmit">
@@ -29,23 +23,25 @@
 </template>
 
 <script>
-import { onUpdated, ref, computed } from "vue"
+import { ref } from "vue"
 import { useRouter } from 'vue-router'
 import useLogout from '../composables/useLogout'
 import getUser from '../composables/getUser'
 import { timestamp } from '../firebase/config'
 import useCollection from '../composables/useCollection'
-import getCollection from '../composables/getCollection'
-import { formatDistanceToNow } from 'date-fns'
+import Chatsection from '../components/Chatsection.vue'
 
 export default {
+  components: {
+    Chatsection
+  },
+
   setup() {
     
     const router = useRouter()
     const { logout, logoutError } = useLogout()
     const { addDoc, error } = useCollection('messages')
     const { user } = getUser()
-    const { documents, msgerror } = getCollection('messages')
 
     const message = ref('')
 
@@ -70,31 +66,11 @@ export default {
       }
     }
 
-    // eslint-disable-next-line vue/return-in-computed-property
-    const formattedDocuments = computed(() => {
-      if(documents.value) {
-        return documents.value.map(doc => {
-          let time = formatDistanceToNow(doc.createdAt.toDate())
-          return { ...doc, createdAt: time }
-        })
-      }
-    })
-
-     //auto scroll to last messages
-    const newmessage = ref(null)
-
-    onUpdated(() => {
-      newmessage.value.scrollTop = newmessage.value.scrollHeight
-    })
-
     return {
       message,
       handleClick,
       handleSubmit,
-      user,
-      documents,
-      formattedDocuments,
-      newmessage
+      user
     }
   }
 }
