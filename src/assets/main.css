@@ -17,7 +17,7 @@ html, body {
 }
 .form-structor::after {
   content: '';
-  opacity: 0.8;
+  opacity: 0.4;
   position: absolute;
   top: 0;
   right: 0;
