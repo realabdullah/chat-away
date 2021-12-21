@@ -199,6 +199,7 @@ export default {
     padding: 15px;
     height: 100%;
     margin-bottom: 50px;
+    overflow: hidden;
 
     .receiver {
       display: flex;
@@ -261,9 +262,11 @@ export default {
     .sender {
       margin-top: 15px;
 			margin-bottom: 15px;
+      padding-right: 5px;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
+      overflow: hidden;
 
       .username {
         display: none;
@@ -328,7 +331,7 @@ export default {
 
     form {
       display: flex;
-      padding: 10px;
+      padding: 15px;
       background-color: #2C2C2E;
 
       .send-input {
