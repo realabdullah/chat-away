@@ -55,7 +55,9 @@ export default {
 
     const handleLogin = async () => {
       await login(email.value, password.value)
-      context.emit('signup')
+      router.push({
+        path: '/chat'
+      })
     }
 
     const loginBtn = () => {

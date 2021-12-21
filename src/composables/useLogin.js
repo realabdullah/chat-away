@@ -7,7 +7,11 @@ const login = async (email, password) => {
   loginError.value = null
 
   try {
-    const res = await projectAuth.signInWithEmailAndPassword(email, password)
+    const res = await projectAuth.signInWithEmailAndPassword(email, password).
+    then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+    })
     loginError.value = null
     return res
   } catch(err) {

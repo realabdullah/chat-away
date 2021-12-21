@@ -3,7 +3,7 @@
     <div v-for="doc in formattedDocuments" :key="doc.id" :class="(doc.name == user.displayName ? 'sender animate__animated animate__bounceInRight' : 'receiver animate__animated animate__bounceInLeft')">
       <div class="username">{{ doc.name }}</div>
       <div class="content">{{ doc.message }}</div>
-      <div class="created">{{ doc.createdAt }} ago.</div>
+      <!-- <div class="created">{{ doc.createdAt }} ago.</div> -->
     </div>
   </section>
 </template>
