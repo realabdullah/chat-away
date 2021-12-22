@@ -20,6 +20,7 @@
               <input type="email" class="input" placeholder="Email" v-model="email" />
               <input type="password" class="input" placeholder="Password" v-model="password" />
             </div>
+            <p class="reset">Forgot password?</p>
             <button class="submit-btn">Log in</button>
           </form>
         </div>
@@ -86,5 +87,7 @@ export default {
 </script>
 
 <style>
-
+.reset {
+  margin-block: 7px;
+}
 </style>
